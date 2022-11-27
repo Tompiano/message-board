@@ -23,7 +23,7 @@ var InternalError = respTemplate{
 	Info:   "internal error",
 }
 
-func NormalErr(c *gin.Context, status int, info string) {
+func RespNormalErr(c *gin.Context, status int, info string) {
 	c.JSON(http.StatusBadRequest, gin.H{
 		"status": status,
 		"info":   info,

@@ -6,9 +6,10 @@ func Entrance() {
 	r := gin.Default()
 	u := r.Group("/user")
 	{
-		u.POST("/register", Register)
-		u.GET("/login")
-		u.PUT("/password")
+		u.POST("/register", Register) //注册
+		u.GET("/login", Login)        //登录
+		u.GET("/forget", Forget)      //忘记密码可通过保密问题找回
+		u.PUT("/modify", Modify)      //修改密码
 	}
 	m := r.Group("/message")
 	{
