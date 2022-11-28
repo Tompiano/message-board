@@ -9,8 +9,8 @@ func CreateMessage(m model.Message) error {
 	err := dao.InsertMessages(m)
 	return err
 }
-func SearchDetail(MessageId, AuthorId, ReceiveId int64) (m model.Message, err error) {
-	m, err = dao.SearchMessage(MessageId, AuthorId, ReceiveId)
+func SearchDetail(MessageId int64) (m model.Message, err error) {
+	m, err = dao.SearchMessage(MessageId)
 	return
 }
 func UpdateMessage(m model.Message) error {

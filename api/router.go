@@ -4,6 +4,7 @@ import "github.com/gin-gonic/gin"
 
 func Entrance() {
 	r := gin.Default()
+	r.Use(HandlerFunc())
 	u := r.Group("/user")
 	{
 		u.POST("/register", Register) //注册

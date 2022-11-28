@@ -79,16 +79,16 @@ func Update(c *gin.Context) {
 }
 func Delete(c *gin.Context) {
 	//获取用户的留言以及各个id
-	Detail := c.PostForm("Detail")
+	Detail := "该留言已删除"
 	MessageId, _ := strconv.ParseInt(c.PostForm("MessageId"), 10, 64)
-	AuthorId, _ := strconv.ParseInt(c.PostForm("AuthorId"), 10, 64)
-	ReceiveId, _ := strconv.ParseInt(c.PostForm("ReceiveId"), 10, 64)
-	if MessageId == 0 || AuthorId == 0 || ReceiveId == 0 {
+	if MessageId == 0 {
 		util.RespParamErr(c)
 		return
 	}
-	//我觉得想要仅仅删除该留言而不删除其评论则将各个id都利用起来
-	//那么删除的就是各项id指向的唯一的那条留言
+	/*我觉得想要仅仅删除该留言而不删除其评论则将各个id都利用起来
+	那么删除的就是各项id指向的唯一的那条留言
+	至于留下”已删除“字样，我觉得就不用delete，而用update
+	将原来的数据修改为”该留言已删除“*/
 	err := service.DeleteMessage(model.Message{
 		Detail: Detail,
 	})
@@ -96,4 +96,5 @@ func Delete(c *gin.Context) {
 		util.RespInternalErr(c)
 		return
 	}
+
 }

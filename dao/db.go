@@ -11,9 +11,9 @@ var DB *sql.DB
 
 func InitDB() {
 	db, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/user")
+	err = db.Ping() //检查数据库是否可用且可访问
 	if err != nil {
-		log.Fatalf("connet mysql error :%v", err)
+		fmt.Println("数据库连接失败")
+		log.Println(err)
 	}
-	DB = db
-	fmt.Println(db.Ping())
 }
