@@ -71,9 +71,29 @@ func Update(c *gin.Context) {
 		Detail: Detail,
 	})
 	if err != nil {
-		util.RespParamErr(c)
+		util.RespInternalErr(c)
 		return
 	}
 	util.RespOK(c)
 
+}
+func Delete(c *gin.Context) {
+	//获取用户的留言以及各个id
+	Detail := c.PostForm("Detail")
+	MessageId, _ := strconv.ParseInt(c.PostForm("MessageId"), 10, 64)
+	AuthorId, _ := strconv.ParseInt(c.PostForm("AuthorId"), 10, 64)
+	ReceiveId, _ := strconv.ParseInt(c.PostForm("ReceiveId"), 10, 64)
+	if MessageId == 0 || AuthorId == 0 || ReceiveId == 0 {
+		util.RespParamErr(c)
+		return
+	}
+	//我觉得想要仅仅删除该留言而不删除其评论则将各个id都利用起来
+	//那么删除的就是各项id指向的唯一的那条留言
+	err := service.DeleteMessage(model.Message{
+		Detail: Detail,
+	})
+	if err != nil {
+		util.RespInternalErr(c)
+		return
+	}
 }

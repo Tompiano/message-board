@@ -33,3 +33,12 @@ func Update(m model.Message) (err error) {
 	}
 	return
 }
+func DeleteMessage(m model.Message) (err error) {
+	//删除留言
+	DB.Exec("delete from message where MessageId=?and AuthorId=? and ReceiveId=?",
+		m.Detail, m.MessageId, m.AuthorId, m.ReceiveId)
+	if err != nil {
+		log.Println(err)
+	}
+	return
+}

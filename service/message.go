@@ -17,3 +17,7 @@ func UpdateMessage(m model.Message) error {
 	err := dao.Update(m)
 	return err
 }
+func DeleteMessage(m model.Message) error {
+	err := dao.DeleteMessage(m)
+	return err
+}
