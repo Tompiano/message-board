@@ -75,7 +75,7 @@ func Forget(c *gin.Context) {
 		util.RespParamErr(c)
 		return
 	}
-	_, err := service.ForgetPassword(Question, Answer)
+	u, err := service.ForgetPassword(Question, Answer)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			util.RespNormalErr(c, 300, "用户不存在")
@@ -83,6 +83,10 @@ func Forget(c *gin.Context) {
 			log.Printf("search user's question and answer error:%v", err)
 			util.RespInternalErr(c)
 		}
+		return
+	}
+	if u.Question != Question && u.Answer != Answer {
+		util.RespNormalErr(c, 20002, "保密问题回答错误")
 		return
 	}
 	c.SetCookie("gin_cookie", "test", 3600, "/", "localhost", false, true)

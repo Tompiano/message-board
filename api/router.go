@@ -15,7 +15,7 @@ func Entrance() {
 	{
 		m.POST("/send", SendMessage) //发表留言
 		m.GET("/write", GetMessage)  //查看留言
-		m.PUT("update", Update)      //更新留言
+		m.PUT("/update", Update)     //修改留言
 		m.DELETE("/delete")          //删除留言
 	}
 	r.Run()

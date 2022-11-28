@@ -13,3 +13,7 @@ func SearchDetail(MessageId, AuthorId, ReceiveId int64) (m model.Message, err er
 	m, err = dao.SearchMessage(MessageId, AuthorId, ReceiveId)
 	return
 }
+func UpdateMessage(m model.Message) error {
+	err := dao.Update(m)
+	return err
+}
