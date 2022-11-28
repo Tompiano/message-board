@@ -21,3 +21,7 @@ func DeleteMessage(m model.Message) error {
 	err := dao.DeleteMessage(m)
 	return err
 }
+func LikeIncrease(m model.Message) error {
+	err := dao.IncreaseLikeNumber(m)
+	return err
+}

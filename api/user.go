@@ -10,18 +10,27 @@ import (
 )
 
 func Register(c *gin.Context) {
-	userName := c.PostForm("name")
-	password := c.PostForm("password")
-	question := c.PostForm("question")
-	answer := c.PostForm("answer")
+	userName := c.PostForm("UserName")
+	password := c.PostForm("Password")
+	question := c.PostForm("Question")
+	answer := c.PostForm("Answer")
 	if userName == "" || password == "" {
 		util.RespParamErr(c)
 		return
 	}
+	//入参校验：1.保密问题不能为空2.密码长度在10-20之间3.用户名长度在1-10之间
 	if question == "" || answer == "" {
 		util.RespNormalErr(c, 200, "保密问题不能为空")
 		return
 	}
+	if len(password) < 10 || len(password) > 20 {
+		util.RespNormalErr(c, 200, "密码长度不符合规范")
+		return
+	}
+	if len(userName) < 1 || len(userName) > 10 {
+		util.RespNormalErr(c, 200, "用户名长度不符合规范")
+	}
+	//插入用户信息有关数据
 	u, err := service.SearchUserByUserName(userName)
 	if err != nil && err != sql.ErrNoRows {
 		log.Printf("search user error:%v", err)
@@ -45,8 +54,8 @@ func Register(c *gin.Context) {
 	util.RespOK(c)
 }
 func Login(c *gin.Context) {
-	userName := c.PostForm("name")
-	password := c.PostForm("password")
+	userName := c.PostForm("UserName")
+	password := c.PostForm("Password")
 	if userName == "" || password == "" {
 		util.RespParamErr(c)
 		return
@@ -69,8 +78,8 @@ func Login(c *gin.Context) {
 	c.SetCookie("gin_cookie", "test", 3600, "/", "localhost", false, true)
 }
 func Forget(c *gin.Context) {
-	Question := c.PostForm("question")
-	Answer := c.PostForm("answer")
+	Question := c.PostForm("Question")
+	Answer := c.PostForm("Answer")
 	if Question == "" || Answer == "" {
 		util.RespParamErr(c)
 		return
@@ -94,8 +103,8 @@ func Forget(c *gin.Context) {
 
 func Modify(c *gin.Context) {
 	//我希望的是登录之后才能修改密码
-	userName := c.PostForm("username")
-	password := c.PostForm("password") //获取修改的密码
+	userName := c.PostForm("UserName")
+	password := c.PostForm("Password") //获取修改的密码
 	//对输入的密码有一定的规范
 	if password == "" {
 		util.RespParamErr(c)

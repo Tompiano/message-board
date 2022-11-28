@@ -14,10 +14,12 @@ func Entrance() {
 	}
 	m := r.Group("/message")
 	{
-		m.POST("/send", SendMessage) //发表留言
-		m.GET("/write", GetMessage)  //查看留言
-		m.PUT("/update", Update)     //修改留言
-		m.DELETE("/delete", Delete)  //删除留言
+		m.POST("/send", SendMessage) //发表留言或评论
+		m.GET("/look", GetMessage)   //查看留言或评论
+		m.PUT("/update", Update)     //修改留言或评论
+		m.DELETE("/delete", Delete)  //删除留言或评论
+		m.POST("/like", Like)        //对留言点赞
 	}
+
 	r.Run()
 }
