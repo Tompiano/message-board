@@ -6,7 +6,7 @@ import (
 
 func InsertUser(u model.User) (err error) {
 	//插入相关的用户信息及保密问题
-	DB.Exec("insert into user(name,password,question,answer)where(?,?,?,?) ",
+	DB.Exec("insert into user(username,password,question,answer)where(?,?,?,?) ",
 		u.UserName, u.Password, u.Question, u.Answer)
 	return
 }
@@ -24,7 +24,7 @@ func SearchUserByUserName(name string) (u model.User, err error) {
 	return
 }
 func SearchUserByQA(question, answer string) (u model.User, err error) {
-	row := DB.QueryRow("select id,username,password from user where(quesiton=?,answer=?)", question, answer)
+	row := DB.QueryRow("select id,username,password from user where quesiton=? and answer=?", question, answer)
 	if err = row.Err(); row.Err() != nil {
 		return
 	}

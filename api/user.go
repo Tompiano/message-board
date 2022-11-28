@@ -107,5 +107,4 @@ func Modify(c *gin.Context) {
 		return
 	}
 	util.RespOK(c)
-
 }

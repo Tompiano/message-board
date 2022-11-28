@@ -1,8 +1,8 @@
 package model
 
 type Message struct {
-	messageId int    `json:"message-id"`
-	authorId  int    `json:"author-id"`
-	receiveId int    `json:"receive-id"`
-	detail    string `json:"detail"`
+	MessageId int64  `json:"message-id"`
+	AuthorId  int64  `json:"author-id"`
+	ReceiveId int64  `json:"receive-id"`
+	Detail    string `json:"detail"`
 }
