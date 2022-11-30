@@ -5,8 +5,8 @@ import (
 	"message-board/model"
 )
 
-func SearchUserByUserName(name string) (u model.User, err error) {
-	u, err = dao.SearchUserByUserName(name)
+func SearchUserByUserName(username, Id string) (u model.User, err error) {
+	u, err = dao.SearchUserByUserName(username, Id)
 	return
 }
 func CreateUser(u model.User) error {
@@ -20,4 +20,13 @@ func ModifyUser(u model.User) error {
 func ForgetPassword(question, answer string) (u model.User, err error) {
 	u, err = dao.SearchUserByQA(question, answer)
 	return
+}
+func SecretPassword(password string) string {
+	NewPassword := dao.HashPassword(password)
+	return NewPassword
+}
+func CompareHashPassword(password, hash string) bool {
+	plainPwd := []byte(password)
+	jud := dao.ComparePassword(hash, plainPwd)
+	return jud
 }

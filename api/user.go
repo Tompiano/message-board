@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"message-board/model"
 	"message-board/service"
@@ -10,14 +11,17 @@ import (
 )
 
 func Register(c *gin.Context) {
+	Id := c.PostForm("Id")
 	userName := c.PostForm("UserName")
 	password := c.PostForm("Password")
+	//获取设置的保密问题以及答案
 	question := c.PostForm("Question")
 	answer := c.PostForm("Answer")
 	if userName == "" || password == "" {
 		util.RespParamErr(c)
 		return
 	}
+
 	//入参校验：1.保密问题不能为空2.密码长度在10-20之间3.用户名长度在1-10之间
 	if question == "" || answer == "" {
 		util.RespNormalErr(c, 200, "保密问题不能为空")
@@ -30,8 +34,8 @@ func Register(c *gin.Context) {
 	if len(userName) < 1 || len(userName) > 10 {
 		util.RespNormalErr(c, 200, "用户名长度不符合规范")
 	}
-	//插入用户信息有关数据
-	u, err := service.SearchUserByUserName(userName)
+	//根据用户名先查询用户是否已存在
+	u, err := service.SearchUserByUserName(userName, Id)
 	if err != nil && err != sql.ErrNoRows {
 		log.Printf("search user error:%v", err)
 		util.RespInternalErr(c)
@@ -41,9 +45,13 @@ func Register(c *gin.Context) {
 		util.RespNormalErr(c, 300, "账户已存在")
 		return
 	}
+
+	//实现密码加盐
+	hashPassword := service.SecretPassword(password)
+	//插入用户信息有关数据
 	err = service.CreateUser(model.User{
 		UserName: userName,
-		Password: password,
+		Password: hashPassword,
 		Question: question,
 		Answer:   answer,
 	})
@@ -53,15 +61,16 @@ func Register(c *gin.Context) {
 	}
 	util.RespOK(c)
 }
+
 func Login(c *gin.Context) {
+	Id := c.PostForm("Id")
 	userName := c.PostForm("UserName")
 	password := c.PostForm("Password")
 	if userName == "" || password == "" {
 		util.RespParamErr(c)
 		return
 	}
-
-	u, err := service.SearchUserByUserName(userName)
+	u, err := service.SearchUserByUserName(userName, Id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			util.RespNormalErr(c, 300, "用户不存在")
@@ -71,12 +80,16 @@ func Login(c *gin.Context) {
 		}
 		return
 	}
-	if u.Password != password {
-		util.RespNormalErr(c, 20001, "密码错误")
+	//验证密码是否正确
+	jud := service.CompareHashPassword(password, u.Password)
+	if !jud {
+		util.RespNormalErr(c, 20002, "密码错误")
 		return
 	}
+	util.RespOK(c)
 	c.SetCookie("gin_cookie", "test", 3600, "/", "localhost", false, true)
 }
+
 func Forget(c *gin.Context) {
 	Question := c.PostForm("Question")
 	Answer := c.PostForm("Answer")

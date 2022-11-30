@@ -7,6 +7,7 @@ func Entrance() {
 	r.Use(HandlerFunc())
 	u := r.Group("/user")
 	{
+
 		u.POST("/register", Register) //注册
 		u.GET("/login", Login)        //登录
 		u.GET("/forget", Forget)      //忘记密码可通过保密问题找回
@@ -14,12 +15,19 @@ func Entrance() {
 	}
 	m := r.Group("/message")
 	{
-		m.POST("/send", SendMessage) //发表留言或评论
-		m.GET("/look", GetMessage)   //查看留言或评论
-		m.PUT("/update", Update)     //修改留言或评论
-		m.DELETE("/delete", Delete)  //删除留言或评论
+		m.POST("/send", SendMessage) //发表留言
+		m.GET("/look", GetMessage)   //查看留言
+		m.PUT("/update", Update)     //修改留言
+		m.DELETE("/delete", Delete)  //删除留言
 		m.POST("/like", Like)        //对留言点赞
 	}
+	/*t := r.Group("/comment")
+	{
+		t.POST("/send", SendComment)       //发表评论
+		t.GET("/look", LookComment)        //查看评论
+		t.PUT("/modify", ModifyComment)    //修改评论
+		t.DELETE("/delete", DeleteComment) //删除评论
+	}*/
 
 	r.Run()
 }

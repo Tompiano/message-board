@@ -2,7 +2,6 @@ package util
 
 import (
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 )
 
@@ -41,10 +40,7 @@ func RespParamErr(c *gin.Context) {
 func RespInternalErr(c *gin.Context) {
 	c.JSON(http.StatusInternalServerError, InternalError)
 }
-func Err(err error) {
-	log.Println(err)
 
-}
 func RespLike(c *gin.Context) {
 	c.JSON(http.StatusOK, "还没有人点赞哦，快来点赞吧")
 }
