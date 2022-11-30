@@ -99,3 +99,25 @@ func Delete(c *gin.Context) {
 	}
 
 }
+func Like(c *gin.Context) {
+	LikeNumber, _ := strconv.ParseInt(c.PostForm("LikeNumber"), 10, 64)
+	userName := c.PostForm("userName")
+	MessageId, _ := strconv.ParseInt(c.PostForm("MessageId"), 10, 64)
+	AuthorId, _ := strconv.ParseInt(c.PostForm("AuthorId"), 10, 64)
+	ReceiveId, _ := strconv.ParseInt(c.PostForm("ReceiveId"), 10, 64)
+	if userName == "" || MessageId == 0 || AuthorId == 0 || ReceiveId == 0 {
+		util.RespParamErr(c)
+		return
+	}
+	err := service.LikeIncrease(model.Message{
+		MessageId:  MessageId,
+		AuthorId:   AuthorId,
+		ReceiveId:  ReceiveId,
+		LikeNumber: LikeNumber,
+	})
+	if err != nil {
+		util.RespInternalErr(c)
+		return
+	}
+	util.RespOK(c)
+}
