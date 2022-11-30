@@ -11,7 +11,6 @@ import (
 )
 
 func Register(c *gin.Context) {
-	Id := c.PostForm("Id")
 	userName := c.PostForm("UserName")
 	password := c.PostForm("Password")
 	//获取设置的保密问题以及答案
@@ -35,7 +34,7 @@ func Register(c *gin.Context) {
 		util.RespNormalErr(c, 200, "用户名长度不符合规范")
 	}
 	//根据用户名先查询用户是否已存在
-	u, err := service.SearchUserByUserName(userName, Id)
+	u, err := service.SearchUserByUserName(userName, password)
 	if err != nil && err != sql.ErrNoRows {
 		log.Printf("search user error:%v", err)
 		util.RespInternalErr(c)
@@ -63,14 +62,13 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	Id := c.PostForm("Id")
 	userName := c.PostForm("UserName")
 	password := c.PostForm("Password")
 	if userName == "" || password == "" {
 		util.RespParamErr(c)
 		return
 	}
-	u, err := service.SearchUserByUserName(userName, Id)
+	u, err := service.SearchUserByUserName(userName, password)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			util.RespNormalErr(c, 300, "用户不存在")

@@ -5,8 +5,8 @@ import (
 	"message-board/model"
 )
 
-func SearchUserByUserName(username, Id string) (u model.User, err error) {
-	u, err = dao.SearchUserByUserName(username, Id)
+func SearchUserByUserName(username, password string) (u model.User, err error) {
+	u, err = dao.SearchUserByUserName(username, password)
 	return
 }
 func CreateUser(u model.User) error {

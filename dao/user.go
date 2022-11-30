@@ -9,7 +9,7 @@ import (
 
 func InsertUser(u model.User) (err error) {
 	//插入相关的用户信息及保密问题
-	_, err = DB.Exec("insert into information(UserName,Password,Question,Answer)where(?,?,?,?) ",
+	_, err = DB.Exec("insert into information(UserName,Password,Question,Answer)values(?,?,?) ",
 		u.UserName, u.Password, u.Question, u.Answer)
 	if err != nil {
 		fmt.Printf("mysql Exec insert failed:%v ", err)
@@ -25,13 +25,13 @@ func InsertModifiedPassword(u model.User) (err error) {
 
 	return
 }
-func SearchUserByUserName(username, Id string) (u model.User, err error) {
+func SearchUserByUserName(username, password string) (u model.User, err error) {
 	//预处理
-	stmt, err := DB.Prepare("select * from information where UserName=? and Password=? and Id=?")
+	stmt, err := DB.Prepare("select * from information where UserName=? and Password=? ")
 	if err != nil {
 		fmt.Printf("mysql prepare failed:%v", err)
 	}
-	row, err := stmt.Query(username)
+	row, err := stmt.Query(username, password)
 	if err != nil {
 		fmt.Printf("mysql query failed:%v", err)
 	}
@@ -39,7 +39,10 @@ func SearchUserByUserName(username, Id string) (u model.User, err error) {
 	if err = row.Err(); row.Err() != nil {
 		return
 	}
-	err = row.Scan(&u.UserName, &u.Password, &u.Id)
+	defer row.Close()
+	for row.Next() {
+		err = row.Scan(&u.UserName, &u.Password)
+	}
 	return
 }
 func SearchUserByQA(question, answer string) (u model.User, err error) {
@@ -61,7 +64,7 @@ func SearchUserByQA(question, answer string) (u model.User, err error) {
 }
 func HashPassword(Password string) string {
 	password := []byte(Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.DefaultCost)
+	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.MaxCost)
 	return string(hashedPassword)
 }
 func ComparePassword(hashedPwd string, plainPwd []byte) bool {

@@ -33,6 +33,7 @@ func SendMessage(c *gin.Context) {
 	util.RespOK(c)
 }
 func GetMessage(c *gin.Context) {
+	//查看留言
 	MessageId, _ := strconv.ParseInt(c.PostForm("MessageId"), 10, 64)
 	AuthorId, _ := strconv.ParseInt(c.PostForm("AuthorId"), 10, 64)
 	ReceiveId, _ := strconv.ParseInt(c.PostForm("ReceiveId"), 10, 64)
