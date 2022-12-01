@@ -39,7 +39,6 @@ func SearchUserByUserName(username, password string) (u model.User, err error) {
 	if err = row.Err(); row.Err() != nil {
 		return
 	}
-	defer row.Close()
 	for row.Next() {
 		err = row.Scan(&u.UserName, &u.Password)
 	}

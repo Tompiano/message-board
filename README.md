@@ -20,4 +20,5 @@ util:装在出错时的响应的模板
 LV3:实现嵌套的评论（我按照贴吧评论的方式写的）
 ParentId如果为零，则说明它是Message下面的父级评论，则用ParentUserId来标识不同的评论
 则子级评论即回复的ParentId就为对应的ParentUserId的值，不同的回复用ChildId来标识
-我觉得在写入评论的时候直接根据各种Id插入数据就可以，然后在查看评论的时候再用递归查询一条留言下全部的评论和回复
+将评论建成一张表ParentComment，将回复建成一张表ChildComment
+评论根据MessageId和ParentUserId来辨别，回复根据MessageId和ParentId和ChildId来辨别

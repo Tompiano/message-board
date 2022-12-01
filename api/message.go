@@ -68,7 +68,7 @@ func Update(c *gin.Context) {
 		return
 	}
 	//更新留言id对应的detail
-	err := service.UpdateMessage(model.Message{
+	var err = service.UpdateMessage(model.Message{
 		Detail: Detail,
 	})
 	if err != nil {
