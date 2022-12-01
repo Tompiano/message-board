@@ -9,8 +9,8 @@ import (
 
 func InsertUser(u model.User) (err error) {
 	//插入相关的用户信息及保密问题
-	_, err = DB.Exec("insert into information(UserName,Password,Question,Answer)values(?,?,?) ",
-		u.UserName, u.Password, u.Question, u.Answer)
+	_, err = DB.Exec("insert into information(UserName,Password,Question,Answer,TokenString)values(?,?,?,?) ",
+		u.UserName, u.Password, u.Question, u.Answer, u.TokenString)
 	if err != nil {
 		fmt.Printf("mysql Exec insert failed:%v ", err)
 	}
@@ -23,6 +23,14 @@ func InsertModifiedPassword(u model.User) (err error) {
 		fmt.Printf("mysql Exec update failed:%v ", err)
 	}
 
+	return
+}
+func InsertPersonalInformation(u model.User) (err error) {
+	_, err = DB.Exec("insert into personInformation(userName,person)values(?,?)",
+		u.UserName, u.Person)
+	if err != nil {
+		fmt.Printf("When insert personal information,mysql Exec insert failed:%v ", err)
+	}
 	return
 }
 func SearchUserByUserName(username, password string) (u model.User, err error) {
@@ -60,11 +68,6 @@ func SearchUserByQA(question, answer string) (u model.User, err error) {
 	}
 	err = row.Scan(&u.Id, &u.UserName)
 	return
-}
-func HashPassword(Password string) string {
-	password := []byte(Password)
-	hashedPassword, _ := bcrypt.GenerateFromPassword(password, bcrypt.MaxCost)
-	return string(hashedPassword)
 }
 func ComparePassword(hashedPwd string, plainPwd []byte) bool {
 	byteHash := []byte(hashedPwd)
