@@ -21,13 +21,13 @@ func Entrance() {
 		m.DELETE("/delete", Delete)  //删除留言
 		m.POST("/like", Like)        //对留言点赞
 	}
-	/*t := r.Group("/comment")
+	t := r.Group("/comment")
 	{
 		t.POST("/send", SendComment)       //发表评论
 		t.GET("/look", LookComment)        //查看评论
 		t.PUT("/modify", ModifyComment)    //修改评论
 		t.DELETE("/delete", DeleteComment) //删除评论
-	}*/
+	}
 
 	r.Run()
 }

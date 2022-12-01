@@ -7,7 +7,7 @@ import (
 
 func InsertMessages(m model.Message) (err error) {
 	//插入用户对应的留言
-	DB.Exec("insert into message(username,)where(?,?,?,?) ",
+	DB.Exec("insert into message(userName,Detail,AuthorId,ReceiveId)where(?,?,?,?) ",
 		m.MessageId, m.Detail, m.AuthorId, m.ReceiveId)
 	if err != nil {
 		log.Println(err)
@@ -16,7 +16,7 @@ func InsertMessages(m model.Message) (err error) {
 }
 func SearchMessage(MessageId, AuthorId, ReceiveId int64) (m model.Message, err error) {
 	//查询用户Id对应的留言
-	row := DB.QueryRow("select detail from message where MessageId=? and AuthorId=? and ReceiveId=?",
+	row := DB.QueryRow("select Detail from message where MessageId=? and AuthorId=? and ReceiveId=?",
 		MessageId, AuthorId, ReceiveId)
 	if err = row.Err(); row.Err() != nil {
 		return
