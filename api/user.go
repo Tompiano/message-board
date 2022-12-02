@@ -9,7 +9,6 @@ import (
 	"message-board/model"
 	"message-board/service"
 	"message-board/util"
-	"time"
 )
 
 func Register(c *gin.Context) {
@@ -24,11 +23,18 @@ func Register(c *gin.Context) {
 		return
 	}
 	//添加用户的个人信息
-	if len(person) > 0 && len(person) < 500 {
-		err := service.CreatePersonInformation
+	if len(person) < 500 {
+		err := service.CreatePersonInformation(model.User{
+			UserName: userName,
+			Person:   person,
+		})
 		if err != nil {
+			log.Printf("Create personal information:%v", err)
 			util.RespInternalErr(c)
+			return
 		}
+	} else {
+		util.RespNormalErr(c, 20003, "个人信息字数超过上限")
 		return
 	}
 	//入参校验：1.保密问题不能为空2.密码长度在10-20之间3.用户名长度在1-10之间
@@ -36,7 +42,7 @@ func Register(c *gin.Context) {
 		util.RespNormalErr(c, 200, "保密问题不能为空")
 		return
 	}
-	if len(password) < 10 || len(password) > 20 {
+	if len(password) < 5 || len(password) > 20 {
 		util.RespNormalErr(c, 200, "密码长度不符合规范")
 		return
 	}
@@ -55,18 +61,9 @@ func Register(c *gin.Context) {
 		return
 	}
 	//jwt鉴权
-	mySigningkey := []byte(password)
-	k := model.MyClaims{
-		Username: userName,
-		StandardClaims: jwt.StandardClaims{
-			NotBefore: time.Now().Unix() - 60,
-			ExpiresAt: time.Now().Unix() + 60*60*24*7,
-			Issuer:    userName,
-		},
-	}
-	t := jwt.NewWithClaims(jwt.SigningMethodES256, k)
-	s, err := t.SignedString(mySigningkey)
+	s, err := service.GetJwt(password, userName)
 	if err != nil {
+		log.Printf("jwt:%v", err)
 		util.RespInternalErr(c)
 		return
 	}
@@ -86,19 +83,21 @@ func Register(c *gin.Context) {
 }
 
 func Login(c *gin.Context) {
-	TokenString := c.PostForm("TokenString")
 	userName := c.PostForm("UserName")
 	password := c.PostForm("Password")
 	if userName == "" || password == "" {
+		log.Println("userName或password为空")
 		util.RespParamErr(c)
 		return
 	}
+	TokenString, err := service.GetJwt(password, userName)
 	//解析jwt鉴权
 	mySigningkey := []byte(password)
-	_, err := jwt.ParseWithClaims(TokenString, &model.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+	_, err = jwt.ParseWithClaims(TokenString, &model.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return mySigningkey, nil
 	})
 	if err != nil {
+		log.Printf("jwt:%v", err)
 		util.RespInternalErr(c)
 		return
 	}
@@ -143,6 +142,7 @@ func Forget(c *gin.Context) {
 		util.RespNormalErr(c, 20002, "保密问题回答错误")
 		return
 	}
+	util.RespOK(c)
 	//c.SetCookie("gin_cookie", "test", 3600, "/", "localhost", false, true)
 }
 

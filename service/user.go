@@ -30,3 +30,7 @@ func CompareHashPassword(password, hash string) bool {
 	jud := dao.ComparePassword(hash, plainPwd)
 	return jud
 }
+func GetJwt(password, userName string) (string, error) {
+	s, err := dao.GetJWT(password, userName)
+	return s, err
+}

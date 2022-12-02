@@ -20,6 +20,7 @@ func SendComment(c *gin.Context) {
 	parentUserId, _ := strconv.ParseInt(c.PostForm("parentUserId"), 10, 64)
 	//检查各个数据是否为空
 	if content == "" || userName == "" || MessageId == 0 || parentUserId == 0 {
+		log.Print("有参数为空")
 		util.RespParamErr(c)
 		return
 	}
