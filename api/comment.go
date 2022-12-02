@@ -30,7 +30,7 @@ func SendComment(c *gin.Context) {
 		return
 	}
 	jud := strings.Contains(content, "傻逼")
-	if !jud {
+	if jud == true {
 		util.RespNormalErr(c, 200, "内容不能包含敏感词汇")
 	}
 	if parentId == 0 {
@@ -76,12 +76,11 @@ func LookComment(c *gin.Context) {
 	3.找到回复，根据ParentId和ChildId在ChildComment表里面找
 	4.找到相应的评论或者回复以后就进行修改
 	*/
-	Content := c.PostForm("content")
 	MessageId, _ := strconv.ParseInt(c.PostForm("messageId"), 10, 64)
 	parentId, _ := strconv.ParseInt(c.PostForm("parentId"), 10, 64)
 	ParentUserId, _ := strconv.ParseInt(c.PostForm("parentUserId"), 10, 64)
 	ChildId, _ := strconv.ParseInt(c.PostForm("childId"), 10, 64)
-	if MessageId == 0 || Content == "" {
+	if MessageId == 0 {
 		util.RespParamErr(c)
 		return
 	}

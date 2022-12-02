@@ -6,23 +6,23 @@ import (
 )
 
 func InsertParentComment(t model.Comment) (err error) {
-	_, err = DB.Exec("insert into Parentcomment(parentId,parentUserId,MessageId,userName,Content)values(?,?,?,?,?)",
+	_, err = DB.Exec("insert into ParentComment(ParentId,ParentUserId,MessageId,UserName,Content)values(?,?,?,?,?)",
 		t.ParentId, t.ParentUserId, t.MessageId, t.UserName, t.Content)
 	if err != nil {
-		fmt.Printf("mysql Exec insert failed:%v ", err)
+		fmt.Printf("When insert Parent Comment,mysql Exec insert failed:%v ", err)
 	}
 	return err
 }
 func InsertChildComment(t model.Comment) (err error) {
-	_, err = DB.Exec("insert into Childcomment(parentId,ChildId,parentUserId,MessageId,userName,Content)values(?,?,?,?,?)",
-		t.ParentId, t.ChildId, t.ParentUserId, t.MessageId, t.UserName, t.Content)
+	_, err = DB.Exec("insert into ChildComment(ParentId,ChildId,MessageId,UserName,Content)values(?,?,?,?,?)",
+		t.ParentId, t.ChildId, t.MessageId, t.UserName, t.Content)
 	if err != nil {
-		fmt.Printf("mysql Exec insert failed:%v ", err)
+		fmt.Printf("When insert Child Comment,mysql Exec insert failed:%v ", err)
 	}
 	return err
 }
 func SelectParentComment(MessageId, ParentUserId int64) (t model.Comment, err error) {
-	stmt, err := DB.Prepare("select content from MessageId=? and ParentUserId=?")
+	stmt, err := DB.Prepare("select Content from ParentComment where MessageId=? and ParentUserId=?")
 	if err != nil {
 		fmt.Printf("When select ParentComment,mysql prepare failed:%v", err)
 	}
@@ -37,7 +37,7 @@ func SelectParentComment(MessageId, ParentUserId int64) (t model.Comment, err er
 	return
 }
 func SelectChildComment(MessageId, ParentId, ChildId int64) (t model.Comment, err error) {
-	stmt, err := DB.Prepare("select content from MessageId=?and ParentId=? and ChildId=?")
+	stmt, err := DB.Prepare("select Content from ChildComment where MessageId=?and ParentId=? and ChildId=?")
 	if err != nil {
 		fmt.Printf("When select ChildComment,mysql prepare failed:%v", err)
 	}
