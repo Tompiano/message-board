@@ -2,7 +2,7 @@ package api
 
 import (
 	"database/sql"
-	"github.com/dgrijalva/jwt-go"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
@@ -60,20 +60,12 @@ func Register(c *gin.Context) {
 		util.RespNormalErr(c, 300, "账户已存在")
 		return
 	}
-	//jwt鉴权
-	s, err := service.GetJwt(password, userName)
-	if err != nil {
-		log.Printf("jwt:%v", err)
-		util.RespInternalErr(c)
-		return
-	}
 	//插入用户信息有关数据
 	err = service.CreateUser(model.User{
-		UserName:    userName,
-		Password:    password,
-		Question:    question,
-		Answer:      answer,
-		TokenString: s,
+		UserName: userName,
+		Password: password,
+		Question: question,
+		Answer:   answer,
 	})
 	if err != nil {
 		util.RespInternalErr(c)
@@ -90,17 +82,21 @@ func Login(c *gin.Context) {
 		util.RespParamErr(c)
 		return
 	}
+	//jwt鉴权
 	TokenString, err := service.GetJwt(password, userName)
-	//解析jwt鉴权
-	mySigningkey := []byte(password)
-	_, err = jwt.ParseWithClaims(TokenString, &model.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
-		return mySigningkey, nil
-	})
 	if err != nil {
 		log.Printf("jwt:%v", err)
 		util.RespInternalErr(c)
 		return
 	}
+	//解析中间件
+	token, err := service.ParseJwt(TokenString, password)
+	if err != nil {
+		log.Printf("jwt:%v", err)
+		util.RespNormalErr(c, 400, "解析发生错误")
+		return
+	}
+	fmt.Println(token)
 	u, err := service.SearchUserByUserName(userName, password)
 	if err != nil {
 		if err == sql.ErrNoRows {

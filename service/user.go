@@ -34,3 +34,7 @@ func GetJwt(password, userName string) (string, error) {
 	s, err := dao.GetJWT(password, userName)
 	return s, err
 }
+func ParseJwt(TokenString, password string) (*model.MyClaims, error) {
+	token, err := dao.ParseJWT(TokenString, password)
+	return token, err
+}

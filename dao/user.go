@@ -96,3 +96,15 @@ func GetJWT(password, userName string) (string, error) {
 	s, err := t.SignedString(mySigningkey)
 	return s, err
 }
+func ParseJWT(TokenString, password string) (*model.MyClaims, error) {
+	mySigningkey := []byte(password)
+	token, err := jwt.ParseWithClaims(TokenString, &model.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return mySigningkey, nil
+	})
+	if token != nil {
+		if claims, jud := token.Claims.(*model.MyClaims); jud && token.Valid {
+			return claims, nil
+		}
+	}
+	return nil, err
+}

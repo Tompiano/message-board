@@ -8,10 +8,10 @@ func Entrance() {
 	u := r.Group("/User")
 	{
 
-		u.POST("/user", Register) //注册
-		u.GET("/user", Login)     //登录
-		u.GET("/user", Forget)    //忘记密码可通过保密问题找回
-		u.PUT("/user", Modify)    //修改密码
+		u.POST("/user", Register)              //注册
+		u.GET("/user", AuthorHandler(), Login) //登录
+		u.GET("/user", Forget)                 //忘记密码可通过保密问题找回
+		u.PUT("/user", Modify)                 //修改密码
 	}
 	m := r.Group("Message")
 	{
