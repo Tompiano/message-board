@@ -20,14 +20,31 @@ LV2我实现的：
 入参校验：用户名长度，密码长度，文章字数限制，文章内容是否含有敏感词汇
  增加个人信息，点赞，密码加盐，jwt鉴权，预防sql注入
 
+LV3---------------------------------------------------------------------
+create table comment(
+    id varchar(10) primary key,
+    userName varchar(10),
+    pId varchar(10),
+    content varchar(500)
+);
 
-LV3:实现嵌套的评论（我按照贴吧评论的方式写的）
-ParentId如果为零，则说明它是Message下面的父级评论，则用ParentUserId来标识不同的评论
-则子级评论即回复的ParentId就为对应的ParentUserId的值，不同的回复用ChildId来标识
-将评论建成一张表ParentComment，将回复建成一张表ChildComment
-评论根据MessageId和ParentUserId来辨别，回复根据MessageId和ParentId和ChildId来辨别
+#将要查找的Id作为rootId传入，自定义了一个用于遍历评论的函数
+#查询rootId下面的所有子节点
+create function getComment (rootId varchar(10))
+returns varchar(10)
+begin
+     declare pId varchar(10);
+     declare cId varchar(10);
+     set pId=-1;-- 初始化pId
+     set cId=rootId;-- 让cId等于要查找的Id
+     while cId is not null do
+         if (pId=-1)then-- pId=-1则说明这是第一轮的循环
+             set pId=cId;-- 将其pId赋值为要查询的根节点的值
+             elseif (pId<>-1)then-- 如果不是，则说明这不是第一轮循环
+             set pId=concat(pId,',',cId);
+         end if;
+             select group_concat(id)into cId from comment where find_in_set(pId,cId);  
+         end while;
+     return pId;
+end;
 
-闲聊ing--------------------------------------------------------
-如果有幸能看到这里，那就摆会儿龙门阵好了！！！！
-首先呢，霖哥辛苦了。。我估计你应该看得很辛苦。。。。我自己都觉得看着瘆得慌。。。。当然，也有写得烂的原因。（—_—''）
-其次呢，没什么话讲（笑哭），哈哈天天开心！！
